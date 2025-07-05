@@ -10,16 +10,25 @@ def append_to_financial_data(file: str, ticker: str, year: int, metric: str, val
 def append_to_financial_data_by_company(file: str):
     pass
 
-def read_netIncome()-> dict:
-    with open("./Data/RawData/ibm/ibm_incomeStatement.json", "r") as file:
+def read_netIncome(tckr: str, max = 50)-> dict:
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
         data = json.load(file)
     
     result = dict()
 
-    for i in range(len(data["annualReports"])):
+    for i in range(min(len(data["annualReports"]), max)):
         year = data["annualReports"][i]["fiscalDateEnding"][0:4]
         value = data["annualReports"][i]["netIncome"]
         result[year] = value
+
+    return result
+
+
+def read_fcf(tckr: str, max = 50)->dict:
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+    
+    result = dict()
 
     return result
 

@@ -4,6 +4,25 @@ import json
 
 apikey = "54TJ9WUBHV8UU83V"
 
+def get_testData(function: str):
+
+    url = "https://www.alphavantage.co/query"
+
+    params = {
+        "function": function,
+        "symbol": "IBM",
+        "apikey": "demo"
+    }
+
+
+
+    response = requests.get(url, params)
+
+    data = response.json()
+
+    return data
+
+
 def get_income_statement_alphavantage(ticker: str):
     testPath = "./Data/RawData/" + ticker
 
