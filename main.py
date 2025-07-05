@@ -3,15 +3,13 @@ import pandas as pd
 import tickers
 import data as dt
 
+import alphavantagapi as ava
+
+
 
 pd.set_option('display.max_rows', None)  # Show all rows
 
-
-tckrs = tickers.getTickers()
-
-data = yf.Ticker("MSFT")
-
-def get_net_income(ticker: str, year: int):
+def get_net_income_yfinance(ticker: str, year: int):
     year = str(year)
 
     data = yf.Ticker(ticker)
@@ -24,7 +22,6 @@ def get_net_income(ticker: str, year: int):
         
     return result
 
+ibm = dt.read_netIncome()
 
-for ticker in tckrs:
-    for year in range(2024, 2020, -1):
-        print(ticker, ",", year, ": ", get_net_income(ticker, year))
+print(ibm["2012"])
