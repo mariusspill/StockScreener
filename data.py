@@ -3,6 +3,8 @@ import os
 import json
 import pandas as pd
 
+lastYear = 2024
+
 def append_to_financial_data(file: str, ticker: str, year: int, metric: str, value):
     with open(file, mode="a") as file:
         file.write("\n" + ticker + ", " + str(year) + ", " + metric + ", " + str(value))
@@ -24,13 +26,53 @@ def read_netIncome(tckr: str, max = 50)-> dict:
     return result
 
 
-def read_fcf(tckr: str, max = 50)->dict:
+def get_ebit(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
         data = json.load(file)
-    
-    result = dict()
 
-    return result
+    return data["annualReports"][lastYear - year]["ebit"]
+
+
+def get_depreciation_and_amortization(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["depreciationAndAmortization"]
+
+
+def get_capitalExpenditure(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_cashFlow.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["capitalExpenditures"]
+
+
+def get_total_current_assets(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["totalCurrentAssets"]
+
+
+def get_cash_and_cash_equivalents(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["cashAndShortTermInvestments"]
+
+
+def get_total_current_liabilities(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["totalCurrentLiabilities"]
+
+
+def get_operating_cashflow(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_cashFlow.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["operatingCashflow"]
 
 
 def get_sp500_tickers():

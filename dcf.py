@@ -1,7 +1,9 @@
+import data
+
 # assumptions
 
-growth_rate = 0.017
-ev_ebitda_multiple = 7
+growth_rate = 0.03      # gdp or industry growth in %
+ev_ebitda_multiple = 7  # peer group, check formula soon
 cost_of_debt = 0.05
 tax_rate = 0.25
 treasury_10y = 0.015
@@ -10,34 +12,6 @@ beta = 1.3
 market_return = 0.1
 equity_value_assumption = 17500
 debt_value_assumption = 15000
-
-n = 5
-
-ebit_assumption = {1: 5000,
-                   2: 5200,
-                   3: 5400,
-                   4: 5500,
-                   5: 5500}
-
-da_assumption = {1:325,
-                  2:330,
-                  3:330,
-                  4:320,
-                  5:320}
-
-
-capEx_assumptiion = {1:1550,
-                     2:1550,
-                     3:1500,
-                     4:1500,
-                     5:1500}
-
-non_cash_increase = {1:180,
-                     2:170,
-                     3:160,
-                     4:150,
-                     5:145}
-    
 
 cash = 500
 marketable_securities = 4500
@@ -51,11 +25,48 @@ shares_outstanding = 1000
 def non_cash_working_capital(current_assets: int, cash: int, current_liabilities: int):
     return (current_assets - cash - current_liabilities)
 
-def free_cash_flow(ebit: int, depreciation_and_amortization: int, capital_expenditures: int, increase_in_non_cash_working_capital: int, tax_rate = 0.25):
+
+def free_cash_flow(ebit: int, depreciation_and_amortization: int, capital_expenditures: int, increase_in_non_cash_working_capital: int, tax_rate = 0.21):
     return ((ebit * (1-tax_rate)) + depreciation_and_amortization - capital_expenditures - increase_in_non_cash_working_capital)
+
+
+
+def cash_flow_growth(cash_flows: dict):
+    cf_growth = dict()
+    past = None
+    for year in cash_flows.keys():
+        if past != None:
+            cf_growth[year] = (cash_flows[year] / past) - 1
+        past = cash_flows[year]
+    
+    return cf_growth
+
+
+def average_cash_flow_growth(cash_flow_growth: dict):
+    sum = 0
+    for keys in cash_flow_growth.keys():
+        sum += cash_flow_growth[keys]
+
+    avrg = sum / len(cash_flow_growth.keys())
+    return(avrg)
+
+
+def cash_flow_prediction(cash_flow: dict, growth_rate: float, n: int = 7, last_cash_flow_multiplicative: float = 1.0):
+    currentyear = max(cash_flow.keys())
+
+    last_cashflow = cash_flow[currentyear] * last_cash_flow_multiplicative
+
+    estimates = dict()
+
+    for i in range(1, n):
+        estimates[currentyear + i] = last_cashflow * (1 + growth_rate) ** i
+
+    return estimates
+
 
 def cost_of_working_equity(treasury: float, beta: float, market_return: float):
     return treasury + (beta * (market_return - treasury))
+
 
 def weighted_average_cost_of_capital(equity: int, debt: int, cost_of_equity: float, cost_of_debt: float, tax_rate : float = 0.25):
     a = (equity / (equity + debt)) * cost_of_equity
@@ -93,10 +104,6 @@ def discounting_terminal_value(wacc: float, tv: int, n: int):
     return tv * dicount_factor
 
 
-def equity_value(enterprise_value: int, cash: int, marketable_securities: int, short_term_debt: int, long_term_debt: int):
-    return (enterprise_value + cash + marketable_securities - short_term_debt - long_term_debt)
-
-
 def enterprise_value(discounted_cash_flow: dict, discounted_terminal_value):
     result = 0
     for values in discounted_cash_flow.values():
@@ -104,37 +111,44 @@ def enterprise_value(discounted_cash_flow: dict, discounted_terminal_value):
     result += discounted_terminal_value
     return result
 
+
+def equity_value(enterprise_value: int, cash: int, marketable_securities: int, short_term_debt: int, long_term_debt: int):
+    return (enterprise_value + cash + marketable_securities - short_term_debt - long_term_debt)
+
+
+
 def share_price(equity_value: int, shares_outstanding: int):
     return equity_value / shares_outstanding
 
 
-# calcutate FCF: 
+def calculate_free_cash_flow_ebit_formula(ticker: str, year:int ):
+    ebit = data.get_ebit(ticker, year)
+    depreciationAndAmortization = data.get_depreciation_and_amortization(ticker, year)
+    capex = data.get_capitalExpenditure(ticker, year)
 
-cash_flow = dict()
-for i in range(1, n + 1):
-    cash_flow[i] = free_cash_flow(ebit_assumption[i],
-                                  da_assumption[i],
-                                  capEx_assumptiion[i],
-                                  non_cash_increase[i])
-print(cash_flow)
+    lyTotalAsset = data.get_total_current_assets(ticker, year - 1)
+    lyTotalCash = data.get_cash_and_cash_equivalents(ticker, year - 1)
+    lyTotalLiabilities = data.get_total_current_liabilities(ticker, year - 1)
 
-wacc = weighted_average_cost_of_capital(equity_value_assumption, debt_value_assumption, cost_of_working_equity(treasury_10y, beta, market_return), cost_of_debt)
-print(wacc)
+    totalAsset = data.get_total_current_assets(ticker, year)
+    totalCash = data.get_cash_and_cash_equivalents(ticker, year)
+    totalLiabilities = data.get_total_current_liabilities(ticker, year)
 
-tv = terminal_Value(cash_flow[n], growth_rate, wacc, ebit_assumption[n] + da_assumption[n], ev_ebitda_multiple)
-print(tv)
+    ly_non_cash_working_capital = non_cash_working_capital(int(lyTotalAsset), int(lyTotalCash), int(lyTotalLiabilities))
+    this_non_cash_working_capital = non_cash_working_capital(int(totalAsset), int(totalCash), int(totalLiabilities)) 
+    net_change_in_non_cash_working_capital =  ly_non_cash_working_capital - this_non_cash_working_capital 
 
-dfc = discounting_cashflows(wacc, cash_flow)
-print(dfc)
+    fcf = free_cash_flow(int(ebit), int(depreciationAndAmortization), int(capex), net_change_in_non_cash_working_capital)
+    return fcf
 
-dtv = discounting_terminal_value(wacc, tv, n)
-print(dtv)
 
-ev = enterprise_value(dfc, dtv)
-print(ev)
+def calculate_free_cash_flow_cfo_formula(ticker: str, year: int):
+    operating_cashflow = data.get_operating_cashflow(ticker, year)
+    capex = data.get_capitalExpenditure(ticker, year)
 
-eqv = equity_value(ev, cash, marketable_securities, short_term_debt, long_term_debt)
-print(eqv)
+    return int(operating_cashflow) - int(capex)
 
-sp = share_price(eqv, shares_outstanding)
-print(sp)
+
+def calculate_free_cash_flow(ticker:str, year: int):
+    return calculate_free_cash_flow_cfo_formula(ticker, year)
+
