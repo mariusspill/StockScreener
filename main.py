@@ -2,9 +2,9 @@ import yfinance as yf
 import pandas as pd
 import tickers
 import data as dt
-
+import os
+import json
 import alphavantagapi as ava
-
 
 
 pd.set_option('display.max_rows', None)  # Show all rows
@@ -22,6 +22,4 @@ def get_net_income_yfinance(ticker: str, year: int):
         
     return result
 
-ibm = dt.read_netIncome()
-
-print(ibm["2012"])
+print(ava.get_income_statement_alphavantage("A"))
