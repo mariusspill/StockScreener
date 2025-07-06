@@ -3,6 +3,8 @@ import os
 import json
 
 apikey = "54TJ9WUBHV8UU83V"
+apikey2 = "9OJZQ19WTKV3SDT8"
+apikey3 = "Z263ODOPE6WZ4706"
 
 def get_testData(function: str):
 
@@ -23,10 +25,10 @@ def get_testData(function: str):
     return data
 
 
-def get_income_statement_alphavantage(ticker: str):
+def get_income_statement_alphavantage(ticker: str, key: str = apikey):
     testPath = "./Data/RawData/" + ticker
 
-    if os.path.exists(testPath):
+    if os.path.exists(testPath) and os.path.exists(testPath + "/" + ticker + "_incomeStatement.json"):
         return {"False": "Data already exists"}
 
 
@@ -35,7 +37,55 @@ def get_income_statement_alphavantage(ticker: str):
     params = {
         "function": "INCOME_STATEMENT",
         "symbol": ticker,
-        "apikey": apikey
+        "apikey": key
+    }
+
+
+
+    response = requests.get(url, params)
+
+    data = response.json()
+
+    return data
+
+
+def get_balance_sheet_alphavantage(ticker: str, key: str = apikey):
+    testPath = "./Data/RawData/" + ticker
+
+    if os.path.exists(testPath) and os.path.exists(testPath + "/" + ticker + "_balanceSheet.json"):
+        return {"False": "Data already exists"}
+
+
+    url = "https://www.alphavantage.co/query"
+
+    params = {
+        "function": "BALANCE_SHEET",
+        "symbol": ticker,
+        "apikey": key
+    }
+
+
+
+    response = requests.get(url, params)
+
+    data = response.json()
+
+    return data
+
+
+def get_cash_flow_alphavantage(ticker: str, key: str = apikey):
+    testPath = "./Data/RawData/" + ticker
+
+    if os.path.exists(testPath) and os.path.exists(testPath + "/" + ticker + "_cashFlow.json"):
+        return {"False": "Data already exists"}
+
+
+    url = "https://www.alphavantage.co/query"
+
+    params = {
+        "function": "CASH_FLOW",
+        "symbol": ticker,
+        "apikey": key
     }
 
 

@@ -75,6 +75,27 @@ def get_operating_cashflow(tckr: str, year: int):
     return data["annualReports"][lastYear - year]["operatingCashflow"]
 
 
+def get_short_term_debt(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["shortTermDebt"]
+
+
+def get_long_term_debt(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["longTermDebt"]    
+
+
+def get_interest_expense(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["interestExpense"]
+
+
 def get_sp500_tickers():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     table = pd.read_html(url)

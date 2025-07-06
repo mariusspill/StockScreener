@@ -46,3 +46,20 @@ def print_analysis(ticker: str):
 
 # for ticker in tckrs:
 #     print_analysis(ticker)
+
+def fetch_data():
+    tckrs = tickers.getTickers("./Data/Indices/s&p500.txt")
+
+    i = 0
+
+    for ticker in tckrs:
+        cf = ava.get_balance_sheet_alphavantage(ticker)
+        print(cf)
+        ava.save_json_raw(ticker, cf, "balanceSheet")
+        i += 1
+
+        if i > 3:
+            return
+
+
+fetch_data()
