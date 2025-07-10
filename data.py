@@ -2,6 +2,7 @@ import csv
 import os
 import json
 import pandas as pd
+import yfinance as yf
 
 lastYear = 2024
 
@@ -79,7 +80,12 @@ def get_short_term_debt(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
         data = json.load(file)
 
-    return data["annualReports"][lastYear - year]["shortTermDebt"]
+    result = data["annualReports"][lastYear - year]["shortTermDebt"]
+
+    if result == "None":
+        result = 0
+
+    return result
 
 
 def get_long_term_debt(tckr: str, year: int):
@@ -96,11 +102,19 @@ def get_interest_expense(tckr: str, year: int):
     return data["annualReports"][lastYear - year]["interestExpense"]
 
 
+def get_marketCap(tckr: str):
+    return yf.Ticker(tckr).info["marketCap"]
+
+
+
 def get_sp500_tickers():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     table = pd.read_html(url)
     df = table[0]
     return df['Symbol'].tolist()
+
+
+
 
 
 def save_tickers(tickers: list[str], index: str):

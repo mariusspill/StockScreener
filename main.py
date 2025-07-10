@@ -42,24 +42,8 @@ def print_analysis(ticker: str):
     print(a.variance_net_income_5years(ticker))
     print(a.standard_deviation_net_income_5years(ticker))
     print(a.coefficient_of_variation_net_income_5years(ticker))
+    print(a.pe_income_average_5years(ticker))
 
 
-# for ticker in tckrs:
-#     print_analysis(ticker)
-
-def fetch_data():
-    tckrs = tickers.getTickers("./Data/Indices/s&p500.txt")
-
-    i = 0
-
-    for ticker in tckrs:
-        cf = ava.get_balance_sheet_alphavantage(ticker)
-        print(cf)
-        ava.save_json_raw(ticker, cf, "balanceSheet")
-        i += 1
-
-        if i > 3:
-            return
-
-
-fetch_data()
+for ticker in tckrs:
+    print_analysis(ticker)

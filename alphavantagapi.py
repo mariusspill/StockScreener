@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import tickers
 
 apikey = "54TJ9WUBHV8UU83V"
 apikey2 = "9OJZQ19WTKV3SDT8"
@@ -110,3 +111,11 @@ def save_json_raw(ticker: str, data: dict, type: str):
 
     with open(filepath, "w") as file:
         file.write(json.dumps(data))
+
+
+def fetch_data():
+    tckrs = tickers.getTickers("./Data/Indices/s&p500.txt")
+
+    for ticker in tckrs:
+        cf = get_balance_sheet_alphavantage(ticker)
+        save_json_raw(ticker, cf, "balanceSheet")

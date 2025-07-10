@@ -15,6 +15,13 @@ def average_net_income_5years(ticker: str):
     return (sum / years)
 
 
+def income_growth_rate(ticker: str, t=5):
+    years = t
+    dt.read_netIncome(ticker, years)
+
+    
+
+
 def variance_net_income_5years(ticker: str):
     years = 5
     data = dt.read_netIncome(ticker, years)
@@ -27,6 +34,7 @@ def variance_net_income_5years(ticker: str):
 
     return (result / (years - 1))
 
+
 def standard_deviation_net_income_5years(ticker: str):
     return math.sqrt(variance_net_income_5years(ticker))
 
@@ -35,3 +43,7 @@ def coefficient_of_variation_net_income_5years(ticker: str):
     return standard_deviation_net_income_5years(ticker) / average_net_income_5years(ticker)
 
 
+def pe_income_average_5years(ticker: str):
+    income = average_net_income_5years(ticker)
+    marketCap = dt.get_marketCap(ticker)
+    return round(marketCap / income, 4)

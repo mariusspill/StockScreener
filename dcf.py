@@ -3,11 +3,11 @@ import yfinance as yf
 
 # assumptions
 
-growth_rate = 0.03      # gdp or industry growth in %
+growth_rate = 0.02      # gdp or industry growth in %
 ev_ebitda_multiple = 7  # peer group, check formula soon
 
 tax= 0.21
-market_return = 0.08
+market_return = 0.1
 
 last_year = 2024
 n = 7
@@ -166,8 +166,9 @@ def calculate_debt(ticker: str, year: int):
 
 
 def calculate_equity_cost(ticker: str, year: int):
-    rf = yf.Ticker("^TNX").history().loc['2025-06-04']["Open"] / 100
+    rf = yf.Ticker("^TNX").history().loc['2025-07-02']["Open"] / 100
     rf = round(rf, 5)
+    # rf = 0.07
     beta = yf.Ticker(ticker).info["beta"]
     rm = market_return
 
@@ -227,5 +228,3 @@ def calculate_share_price(ticker: str, year: int):
 
 def dfc(ticker):
     return calculate_share_price(ticker, last_year)
-
-
