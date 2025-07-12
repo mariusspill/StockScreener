@@ -42,7 +42,5 @@ def print_analysis(ticker: str):
     print(a.pe_income_average_5years(ticker))
 
 
-# for ticker in tckrs:
-#     print_analysis(ticker)
-
-print(a.average_growth_rate_5years("APA"))
+for ticker in tckrs:
+    print_analysis(ticker)
