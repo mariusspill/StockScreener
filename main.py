@@ -38,12 +38,11 @@ tckrs = tickers.getTickers("./list.txt")
 def print_analysis(ticker: str):
     print()
     print(ticker)
-    print(a.average_net_income_5years(ticker))
-    print(a.variance_net_income_5years(ticker))
-    print(a.standard_deviation_net_income_5years(ticker))
-    print(a.coefficient_of_variation_net_income_5years(ticker))
+    print(a.average_growth_rate_5years(ticker))
     print(a.pe_income_average_5years(ticker))
 
 
-for ticker in tckrs:
-    print_analysis(ticker)
+# for ticker in tckrs:
+#     print_analysis(ticker)
+
+print(a.average_growth_rate_5years("APA"))

@@ -2,6 +2,8 @@ import data as dt
 import math
 
 
+lastYear = 2024
+
 
 def average_net_income_5years(ticker: str):
     years = 5
@@ -15,11 +17,27 @@ def average_net_income_5years(ticker: str):
     return (sum / years)
 
 
-def income_growth_rate(ticker: str, t=5):
-    years = t
-    dt.read_netIncome(ticker, years)
+def income_growth_rate(ticker: str, year: int):
+    lastYear = int(dt.get_netIncome(ticker, year - 1))
+    thisYear = int(dt.get_netIncome(ticker, year))
 
+    if thisYear < 0 and lastYear > 0:
+        return - 1
     
+    if lastYear < 0 and thisYear > 0:
+        return 0
+
+    return (thisYear / lastYear) - 1
+    
+
+def average_growth_rate_5years(ticker: str):
+    sum = 0
+
+    for year in range(lastYear - 4, lastYear + 1):
+        rate = income_growth_rate(ticker, year)
+        sum += rate
+
+    return (sum / 5)
 
 
 def variance_net_income_5years(ticker: str):

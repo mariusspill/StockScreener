@@ -117,5 +117,5 @@ def fetch_data():
     tckrs = tickers.getTickers("./Data/Indices/s&p500.txt")
 
     for ticker in tckrs:
-        cf = get_balance_sheet_alphavantage(ticker)
-        save_json_raw(ticker, cf, "balanceSheet")
+        cf = get_income_statement_alphavantage(ticker)
+        save_json_raw(ticker, cf, "incomeStatement")

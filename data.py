@@ -27,6 +27,13 @@ def read_netIncome(tckr: str, max = 50)-> dict:
     return result
 
 
+def get_netIncome(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["netIncome"]
+
+
 def get_ebit(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
         data = json.load(file)

@@ -1,0 +1,1 @@
+APO data from alphaadvantage is wrong (netIncome)
