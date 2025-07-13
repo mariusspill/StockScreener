@@ -1,4 +1,9 @@
-import alphavantagedata as dt
+"""
+Analysis of stocks by key numbers that are relevant for my strategy
+"""
+
+import yfinance as yf
+import dbdata
 import math
 
 
@@ -7,19 +12,22 @@ lastYear = 2024
 
 def average_net_income_5years(ticker: str):
     years = 5
-    data = dt.read_netIncome(ticker, years)
+    data = list()
+    
+    for i in range(years):
+        data.append(dbdata.get_net_income(ticker, lastYear - i))
 
     sum = 0
 
-    for income in data.values():
+    for income in data:
         sum += int(income)
     
     return (sum / years)
 
 
 def income_growth_rate(ticker: str, year: int):
-    lastYear = int(dt.get_netIncome(ticker, year - 1))
-    thisYear = int(dt.get_netIncome(ticker, year))
+    lastYear = dbdata.get_net_income(ticker, year - 1)
+    thisYear = dbdata.get_net_income(ticker, year)
 
     if thisYear < 0 and lastYear > 0:
         return - 1
@@ -42,13 +50,17 @@ def average_growth_rate_5years(ticker: str):
 
 def variance_net_income_5years(ticker: str):
     years = 5
-    data = dt.read_netIncome(ticker, years)
+    data = list()
+    
+    for i in range(years):
+        data.append(dbdata.get_net_income(ticker, lastYear - i))
+
     avrg = average_net_income_5years(ticker)
 
     result = 0
 
-    for income in data.values():
-        result += (int(income) - avrg) ** 2 
+    for income in data:
+        result += (income - avrg) ** 2 
 
     return (result / (years - 1))
 
@@ -63,5 +75,5 @@ def coefficient_of_variation_net_income_5years(ticker: str):
 
 def pe_income_average_5years(ticker: str):
     income = average_net_income_5years(ticker)
-    marketCap = dt.get_marketCap(ticker)
+    marketCap = yf.Ticker(ticker).info["marketCap"]
     return round(marketCap / income, 4)

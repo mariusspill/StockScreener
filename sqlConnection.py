@@ -1,6 +1,11 @@
+"""
+Module to store and retrieve data from DB
+"""
+
 import mysql.connector as sqlc
 import alphavantagedata as dt
 import yfinance as yf
+
 
 connection = sqlc.connect(
     user = "root",
@@ -12,11 +17,19 @@ connection = sqlc.connect(
 cursor = connection.cursor()
 
 def add_entry_company(name: str):
+    """
+    Add a new entry to abstract company database table
+    name: Field for long name of company
+    """
     cursor.execute(f"INSERT INTO company (name) VALUES (%s);", (name,))
     connection.commit()
 
 
 def add_entry_company_identifiers(id: int, ticker: str, isin: str, wkn: str):
+    """
+    Add a new entry to company_identifier database table
+    id: company_id from abstract table, isin: isin, wkn: german Wertpapierkennnummer
+    """
     cursor.execute(f"INSERT INTO company_identifiers (company_id, ticker, isin, wkn) VALUES ({id}, '{ticker}', '{isin}', '{wkn}');")
     connection.commit()
 
@@ -24,6 +37,9 @@ def add_entry_company_identifiers(id: int, ticker: str, isin: str, wkn: str):
 def add_entry_income_statement(company_id: int, year: int, revenue: int = None, gross_profit:int = None, 
                                operating_income: int = None, net_income: int = None, EBIT: int = None, EBITDA: int = None,
                                cost_of_revenue:int = None, operating_expense: int = None, interest_cost: int = None, taxes: int = None):
+    """
+    Add a new entry to income_statements database table
+    """
     sql = """INSERT INTO income_statements (company_id, year, revenue, gross_profit,
                    operating_income, net_income, EBIT, EBITDA, cost_of_revenue, operating_expense, interest_cost, taxes) VALUES 
                    (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -48,11 +64,17 @@ def add_entry_income_statement(company_id: int, year: int, revenue: int = None, 
 
 
 def update_entry_income_statement(id: int, column: str, value: int):
+    """
+    Updates entry in income_statements database table
+    """
     cursor.execute(f"UPDATE income_statements SET {column} = {value} WHERE id = {id};")
     connection.commit()
 
 
 def get_data_identifiers():
+    """
+    Returns my id and other identifiers for all companies in db
+    """
     cursor.execute(f"""SELECT Company.id,
                     Company.name, 
                     Company_Identifiers.ticker, 
@@ -62,17 +84,10 @@ def get_data_identifiers():
     return cursor.fetchall()
 
 
-def get_net_income(ticker: int, year: int):
-    cursor.execute(f"""SELECT company.id, company_identifiers.ticker, income_statements.net_income
-                   FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
-                   INNER JOIN income_statements ON company.id = income_statements.company_id
-                   WHERE company_identifiers.ticker = '{ticker}' AND income_statements.year = {year};""")
-    data = cursor.fetchall()
-    print(data)
-    return data[0][2]
-
-
 def get_id_by_ticker(ticker: int):
+    """
+    Returns my id for specified company
+    """
     cursor.execute(f"""SELECT Company.id,
                     Company_Identifiers.ticker
                     FROM Company JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
@@ -85,6 +100,9 @@ def get_id_by_ticker(ticker: int):
 
 
 def automate_data_insertion(ticker: str):
+    """
+    Datapipeline for income_statements table: alphavantaga raw json -> database
+    """
     # does this entry exist:
     company_id = get_id_by_ticker(ticker)
 
@@ -148,9 +166,14 @@ def automate_data_insertion(ticker: str):
 
 
 def fetch_sp500_from_alpha_advantage():
+    """
+    automated pipeline for all s&p500 companies
+    """
     tickers = dt.get_sp500_tickers()
 
     for ticker in tickers:
         automate_data_insertion(ticker)
 
-fetch_sp500_from_alpha_advantage()
+# fetch_sp500_from_alpha_advantage()
+
+add_entry_company

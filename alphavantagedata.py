@@ -169,19 +169,11 @@ def get_years_covered(tckr: str):
 
 
 
-def get_marketCap(tckr: str):
-    return yf.Ticker(tckr).info["marketCap"]
-
-
-
 def get_sp500_tickers():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     table = pd.read_html(url)
     df = table[0]
     return df['Symbol'].tolist()
-
-
-
 
 
 def save_tickers(tickers: list[str], index: str):

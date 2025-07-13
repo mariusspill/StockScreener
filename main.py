@@ -7,6 +7,7 @@ import json
 import alphavantagapi as ava
 import analysis as a
 import dcf
+import dbdata
 
 pd.set_option('display.max_rows', None)  # Show all rows
 
@@ -40,3 +41,6 @@ def print_analysis(ticker: str):
     print(ticker)
     print(a.average_growth_rate_5years(ticker))
     print(a.pe_income_average_5years(ticker))
+
+for ticker in tckrs:
+    print_analysis(ticker)
