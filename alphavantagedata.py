@@ -27,6 +27,13 @@ def read_netIncome(tckr: str, max = 50)-> dict:
     return result
 
 
+def get_revenue(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["totalRevenue"]
+
+
 def get_netIncome(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
         data = json.load(file)
@@ -39,6 +46,48 @@ def get_ebit(tckr: str, year: int):
         data = json.load(file)
 
     return data["annualReports"][lastYear - year]["ebit"]
+
+
+def get_gross_profit(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["grossProfit"]
+
+
+def get_interest_paid(tckr, year:int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["interestExpense"]
+
+
+def get_interest_expense(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["interestExpense"]
+
+
+def get_taxes_paid(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["incomeTaxExpense"]
+
+
+def get_operating_income(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["operatingIncome"]
+
+
+def get_operating_expenses(tckr: str, year: int):
+    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+        data = json.load(file)
+
+    return data["annualReports"][lastYear - year]["operatingExpenses"]
 
 
 def get_depreciation_and_amortization(tckr: str, year: int):
@@ -83,6 +132,7 @@ def get_operating_cashflow(tckr: str, year: int):
     return data["annualReports"][lastYear - year]["operatingCashflow"]
 
 
+
 def get_short_term_debt(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_balanceSheet.json", "r") as file:
         data = json.load(file)
@@ -102,11 +152,21 @@ def get_long_term_debt(tckr: str, year: int):
     return data["annualReports"][lastYear - year]["longTermDebt"]    
 
 
-def get_interest_expense(tckr: str, year: int):
-    with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
-        data = json.load(file)
 
-    return data["annualReports"][lastYear - year]["interestExpense"]
+def get_years_covered(tckr: str):
+    try:
+        with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
+            data = json.load(file)
+        
+        result = list()
+
+        for record in data["annualReports"]:
+            result.append(int(record["fiscalDateEnding"][0:4]))
+
+        return result
+    except:
+        return []
+
 
 
 def get_marketCap(tckr: str):

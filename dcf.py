@@ -1,4 +1,4 @@
-import data
+import alphavantagedata
 import yfinance as yf
 
 # assumptions
@@ -121,17 +121,17 @@ def share_price(equity_value: int, shares_outstanding: int):
 # automated for individual stock
 
 def calculate_free_cash_flow_ebit_formula(ticker: str, year:int ):
-    ebit = data.get_ebit(ticker, year)
-    depreciationAndAmortization = data.get_depreciation_and_amortization(ticker, year)
-    capex = data.get_capitalExpenditure(ticker, year)
+    ebit = alphavantagedata.get_ebit(ticker, year)
+    depreciationAndAmortization = alphavantagedata.get_depreciation_and_amortization(ticker, year)
+    capex = alphavantagedata.get_capitalExpenditure(ticker, year)
 
-    lyTotalAsset = data.get_total_current_assets(ticker, year - 1)
-    lyTotalCash = data.get_cash_and_cash_equivalents(ticker, year - 1)
-    lyTotalLiabilities = data.get_total_current_liabilities(ticker, year - 1)
+    lyTotalAsset = alphavantagedata.get_total_current_assets(ticker, year - 1)
+    lyTotalCash = alphavantagedata.get_cash_and_cash_equivalents(ticker, year - 1)
+    lyTotalLiabilities = alphavantagedata.get_total_current_liabilities(ticker, year - 1)
 
-    totalAsset = data.get_total_current_assets(ticker, year)
-    totalCash = data.get_cash_and_cash_equivalents(ticker, year)
-    totalLiabilities = data.get_total_current_liabilities(ticker, year)
+    totalAsset = alphavantagedata.get_total_current_assets(ticker, year)
+    totalCash = alphavantagedata.get_cash_and_cash_equivalents(ticker, year)
+    totalLiabilities = alphavantagedata.get_total_current_liabilities(ticker, year)
 
     ly_non_cash_working_capital = non_cash_working_capital(int(lyTotalAsset), int(lyTotalCash), int(lyTotalLiabilities))
     this_non_cash_working_capital = non_cash_working_capital(int(totalAsset), int(totalCash), int(totalLiabilities)) 
@@ -142,8 +142,8 @@ def calculate_free_cash_flow_ebit_formula(ticker: str, year:int ):
 
 
 def calculate_free_cash_flow_cfo_formula(ticker: str, year: int):
-    operating_cashflow = data.get_operating_cashflow(ticker, year)
-    capex = data.get_capitalExpenditure(ticker, year)
+    operating_cashflow = alphavantagedata.get_operating_cashflow(ticker, year)
+    capex = alphavantagedata.get_capitalExpenditure(ticker, year)
 
     return int(operating_cashflow) - int(capex)
 
@@ -162,7 +162,7 @@ def fcf_timeline(ticker:str, starting_year:int, end_year:int) -> dict:
 
 
 def calculate_debt(ticker: str, year: int):
-    return (int(data.get_long_term_debt(ticker, year)) + int(data.get_short_term_debt(ticker, year)))
+    return (int(alphavantagedata.get_long_term_debt(ticker, year)) + int(alphavantagedata.get_short_term_debt(ticker, year)))
 
 
 def calculate_equity_cost(ticker: str, year: int):
@@ -177,7 +177,7 @@ def calculate_equity_cost(ticker: str, year: int):
 
 def calculate_cost_of_debt(ticker: str, year: int, tax_rate: float = tax):
     total_debt = calculate_debt(ticker, year)
-    interest_expense = data.get_interest_expense(ticker,year)
+    interest_expense = alphavantagedata.get_interest_expense(ticker,year)
 
     return ((int(interest_expense) / int(total_debt)) * (1 - tax_rate))
 
@@ -217,7 +217,7 @@ def calculate_enterprise_value(ticker: str, year: int):
 
 def calculate_equity_value(ticker: str, year: int):
     ev = calculate_enterprise_value(ticker, year)
-    cash = int(data.get_cash_and_cash_equivalents(ticker, year))
+    cash = int(alphavantagedata.get_cash_and_cash_equivalents(ticker, year))
     total_debt = calculate_debt(ticker, year)
     return equity_value(ev, cash, 0, total_debt, 0)
 

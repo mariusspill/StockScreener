@@ -1,4 +1,4 @@
-import data as dt
+import alphavantagedata as dt
 import math
 
 

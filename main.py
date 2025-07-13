@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import tickers
-import data as dt
+import alphavantagedata as dt
 import os
 import json
 import alphavantagapi as ava
@@ -40,7 +40,3 @@ def print_analysis(ticker: str):
     print(ticker)
     print(a.average_growth_rate_5years(ticker))
     print(a.pe_income_average_5years(ticker))
-
-
-for ticker in tckrs:
-    print_analysis(ticker)

@@ -119,3 +119,7 @@ def fetch_data():
     for ticker in tckrs:
         cf = get_income_statement_alphavantage(ticker)
         save_json_raw(ticker, cf, "incomeStatement")
+
+        with open("./list.txt", "a") as file:
+            text = "\n" + ticker
+            file.write(text)

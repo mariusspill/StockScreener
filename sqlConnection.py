@@ -1,5 +1,6 @@
 import mysql.connector as sqlc
-import data
+import alphavantagedata as dt
+import yfinance as yf
 
 connection = sqlc.connect(
     user = "root",
@@ -11,7 +12,7 @@ connection = sqlc.connect(
 cursor = connection.cursor()
 
 def add_entry_company(name: str):
-    cursor.execute(f"INSERT INTO company (name) VALUES ('{name}');")
+    cursor.execute(f"INSERT INTO company (name) VALUES (%s);", (name,))
     connection.commit()
 
 
@@ -71,19 +72,85 @@ def get_net_income(ticker: int, year: int):
     return data[0][2]
 
 
+def get_id_by_ticker(ticker: int):
+    cursor.execute(f"""SELECT Company.id,
+                    Company_Identifiers.ticker
+                    FROM Company JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
+                    WHERE Company_Identifiers.ticker = '{ticker}';""")
+    try:
+        return cursor.fetchall()[0][0]
+    except:
+        return "No data for company"
 
-def automate_data_insertion():
+
+
+def automate_data_insertion(ticker: str):
     # does this entry exist:
-    cursor.execute(f"""SELECT company.id, company_identifiers.ticker, income_statements.net_income
-                   FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
-                   INNER JOIN income_statements ON company.id = income_statements.company_id
-                   WHERE company_identifiers.ticker = 'IBM' AND income_statements.year = 2023;""")
-    data = cursor.fetchall()
-    if data == []:
-        print("record doesnt exist")
+    company_id = get_id_by_ticker(ticker)
+
+    if isinstance(company_id, int) and ticker is not None:
+
+        years = dt.get_years_covered(ticker)
+        print(ticker)
+
+        for year in years:
+            print(year)
+            revenue = dt.get_revenue(ticker, year)
+            net_income = dt.get_netIncome(ticker, year)
+            gross_profit = dt.get_gross_profit(ticker, year)
+            taxes = dt.get_taxes_paid(ticker, year)
+            interest = dt.get_interest_paid(ticker, year)
+
+            cost_of_revenue = int(revenue) - int(gross_profit)
+
+            if not "None" in net_income:
+                net_income = int(net_income)
+            else:
+                net_income = 0
+
+            if not "None" in interest:
+                interest = int(interest)
+            else:
+                interest = 0
+
+            if not "None" in taxes:
+                taxes = int(taxes)
+            else:
+                taxes = 0
+
+            ebit = int(net_income) + int(taxes) + int(interest)
+
+
+            da = dt.get_depreciation_and_amortization(ticker, year)
+            if not "None" in da:
+                ebitda = ebit + int(da)
+            else:
+                ebitda = ebit
+            operating_income = dt.get_operating_income(ticker, year)
+            operating_expenses = dt.get_operating_expenses(ticker, year)
+
+            cursor.execute(f"""SELECT company.id, company_identifiers.ticker, income_statements.*
+                        FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
+                        INNER JOIN income_statements ON company.id = income_statements.company_id
+                        WHERE company_identifiers.ticker = '{ticker}' AND income_statements.year = {year};""")
+            data = cursor.fetchall()
+
+            if data == []:
+                add_entry_income_statement(company_id, year, revenue, gross_profit, net_income=net_income, EBIT=ebit, EBITDA=ebitda, cost_of_revenue=cost_of_revenue, interest_cost=interest, taxes=taxes)
+            else:
+                if data[0][15] == 1:
+                    print("record checked handly")
+                else:
+                    print("update possible")
+
     else:
-        print("record exists already")
-        print(data)
+        print("no company data for ", ticker)
 
 
-automate_data_insertion()
+def fetch_sp500_from_alpha_advantage():
+    tickers = dt.get_sp500_tickers()
+
+    for ticker in tickers:
+        automate_data_insertion(ticker)
+
+fetch_sp500_from_alpha_advantage()
