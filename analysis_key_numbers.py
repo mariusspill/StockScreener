@@ -5,9 +5,11 @@ Analysis of stocks by key numbers that are relevant for my strategy
 import yfinance as yf
 import dbdata
 import math
-
+import sqlConnection as sql
 
 lastYear = 2024
+
+
 
 
 def average_net_income_5years(ticker: str):
