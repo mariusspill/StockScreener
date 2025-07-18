@@ -2,7 +2,7 @@
 Module to access specific keynumbers from database like net income
 """
 
-import sqlConnection as sql
+import databases.sqlConnection as sql
 
 def get_net_income(ticker: int, year: int):
     """

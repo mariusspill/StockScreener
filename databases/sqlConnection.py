@@ -3,7 +3,7 @@ Module to store and retrieve data from DB
 """
 
 import mysql.connector as sqlc
-import alphavantagedata as dt
+import apis.alphavantagedata as dt
 import yfinance as yf
 
 
@@ -109,15 +109,18 @@ def automate_data_insertion(ticker: str):
     if isinstance(company_id, int) and ticker is not None:
 
         years = dt.get_years_covered(ticker)
+
         print(ticker)
 
         for year in years:
-            print(year)
             revenue = dt.get_revenue(ticker, year)
             net_income = dt.get_netIncome(ticker, year)
             gross_profit = dt.get_gross_profit(ticker, year)
             taxes = dt.get_taxes_paid(ticker, year)
             interest = dt.get_interest_paid(ticker, year)
+
+            if revenue == None:
+                revenue = 0
 
             cost_of_revenue = int(revenue) - int(gross_profit)
 
@@ -172,8 +175,8 @@ def fetch_sp500_from_alpha_advantage():
     tickers = dt.get_sp500_tickers()
 
     for ticker in tickers:
+        if "CDW" in ticker:
+            continue
+        if "DXCM" in ticker:
+            continue
         automate_data_insertion(ticker)
-
-# fetch_sp500_from_alpha_advantage()
-
-add_entry_company

@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-import tickers
+import helpers.tickers as tickers
 
 apikey = "54TJ9WUBHV8UU83V"
 apikey2 = "9OJZQ19WTKV3SDT8"
@@ -100,7 +100,9 @@ def get_cash_flow_alphavantage(ticker: str, key: str = apikey):
 
 def save_json_raw(ticker: str, data: dict, type: str):
     if "Note" in data.keys() or "Information" in data.keys() or "False" in data.keys():
-        return
+        return 0
+
+    result = 0
 
     newpath = "D:\\Data\\Programming\\GitHub\\StockScreener\\Data\\RawData\\" + ticker
 
@@ -109,8 +111,13 @@ def save_json_raw(ticker: str, data: dict, type: str):
 
     filepath = newpath + "\\" + ticker + "_" + type  + ".json"
 
+    if not os.path.exists(filepath):
+        result = 1
+
     with open(filepath, "w") as file:
         file.write(json.dumps(data))
+    
+    return result
 
 
 def fetch_data():
@@ -118,8 +125,9 @@ def fetch_data():
 
     for ticker in tckrs:
         cf = get_income_statement_alphavantage(ticker)
-        save_json_raw(ticker, cf, "incomeStatement")
+        result = save_json_raw(ticker, cf, "incomeStatement")
 
-        with open("./list.txt", "a") as file:
-            text = "\n" + ticker
-            file.write(text)
+        if result == 1:
+            with open("./helpers/list.txt", "a") as file:
+                text = "\n" + ticker
+                file.write(text)

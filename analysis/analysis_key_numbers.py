@@ -3,9 +3,9 @@ Analysis of stocks by key numbers that are relevant for my strategy
 """
 
 import yfinance as yf
-import dbdata
+import databases.dbdata as dbdata
 import math
-import sqlConnection as sql
+import databases.sqlConnection as sql
 
 lastYear = 2024
 
@@ -35,6 +35,9 @@ def income_growth_rate(ticker: str, year: int):
         return - 1
     
     if lastYear < 0 and thisYear > 0:
+        return 0
+    
+    if lastYear == 0:
         return 0
 
     return (thisYear / lastYear) - 1

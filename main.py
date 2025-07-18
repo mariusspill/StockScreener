@@ -1,17 +1,14 @@
-import yfinance as yf
-import pandas as pd
-import tickers
-import alphavantagedata as dt
-import os
-import json
-import alphavantagapi as ava
-import analysis_key_numbers as a
-import analysis_screening as ascreen
-import dcf
-import dbdata
+import helpers.tickers as tickers
+import apis.alphavantagapi as ava
+import analysis.analysis_screening as ascreen
+import databases.sqlConnection as sql
 
-pd.set_option('display.max_rows', None)  # Show all rows
+tckrs = tickers.getTickers("./helpers/list.txt")
 
-tckrs = tickers.getTickers("./list.txt")
+# ascreen.print_analysis(tckrs)
 
-ascreen.print_analysis(tckrs)
+def daily_fetch():
+    ava.fetch_data()
+    sql.fetch_sp500_from_alpha_advantage()
+
+# daily_fetch()

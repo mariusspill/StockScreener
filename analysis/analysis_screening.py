@@ -3,10 +3,10 @@ Module provides functions to screen a list of stocks
 """
 
 import yfinance as yf
-import dbdata
-import analysis_key_numbers as akn
-import sqlConnection as sql
-import tickers
+import databases.dbdata as dbdata
+import analysis.analysis_key_numbers as akn
+import databases.sqlConnection as sql
+import helpers.tickers as tickers
 
 
 class Stock:
@@ -119,6 +119,10 @@ def screening(stock_list: dict[str, Stock]):
                 screen = False
         if stock.average_income_growth < 0.05:
             screen = False
+
+        if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.5:
+            screen = False
+
         if screen:
             result_list.append(stock)
 
@@ -129,4 +133,4 @@ def screening(stock_list: dict[str, Stock]):
         i+=1
 
 
-screening(list_of_stocks(tickers.getTickers("./list.txt")))
+# screening(list_of_stocks(tickers.getTickers("./list.txt")))

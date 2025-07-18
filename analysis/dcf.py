@@ -3,7 +3,7 @@ Basic DCF Model like the one used by warren buffett
 """
 
 
-import alphavantagedata
+import apis.alphavantagedata as alphavantagedata
 import yfinance as yf
 
 # assumptions
