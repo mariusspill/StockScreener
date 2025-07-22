@@ -7,6 +7,8 @@ import databases.dbdata as dbdata
 import analysis.analysis_key_numbers as akn
 import databases.sqlConnection as sql
 import helpers.tickers as tickers
+import pandas as pd
+import caching.caching as cch
 
 
 class Stock:
@@ -44,14 +46,20 @@ class Stock:
     def calc_average_earnings_growth(self):
         sum = 0
 
-        for year in self.net_income.keys():
-            if year != min(self.net_income.keys()):
+        min_year = min(self.net_income.keys())
+        years = self.net_income.keys()
+
+        for year in years:
+            if year != min_year:
                 self.calc_earnings_growth(year)
 
         lastYear = max(self.net_income.keys())
 
         for year in range(lastYear - 4, lastYear + 1):
-            rate = self.earnings_growth[year]
+            try:
+                rate = self.earnings_growth[year]
+            except:
+                rate = -1
             sum += rate
 
         self.average_income_growth = (sum / 5)
@@ -61,16 +69,18 @@ class Stock:
         years = 5
         sum = 0
 
-        for earnings in self.net_income.values():
-            sum += earnings
+        earnings = self.net_income.values()
+
+        for earning in earnings :
+            sum += earning
             
         self.average_income_5years = (sum / years)
 
 
     def calc_pe_averaged_5years(self):
         income = self.average_income_5years
-        marketCap = yf.Ticker(self.ticker).info["marketCap"]
-        self.pe_5year_average = round(marketCap / income, 4)
+        mcaps = cch.get_market_caps()
+        self.pe_5year_average = round(mcaps[self.ticker] / income, 4)
 
 
 
@@ -120,7 +130,7 @@ def screening(stock_list: dict[str, Stock]):
         if stock.average_income_growth < 0.05:
             screen = False
 
-        if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.5:
+        if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6:
             screen = False
 
         if screen:
