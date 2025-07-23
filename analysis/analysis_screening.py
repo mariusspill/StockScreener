@@ -110,9 +110,12 @@ def list_of_stocks(ticker_list: str):
         stock_list[entry[0]].to_net_income(entry[2], entry[1])
 
     for ticker in ticker_list:
-        stock_list[ticker].calc_average_earnings_growth()
-        stock_list[ticker].calc_income_average_5years()
-        stock_list[ticker].calc_pe_averaged_5years()
+        try:
+            stock_list[ticker].calc_average_earnings_growth()
+            stock_list[ticker].calc_income_average_5years()
+            stock_list[ticker].calc_pe_averaged_5years()
+        except:
+            continue
 
     return stock_list
 
@@ -121,26 +124,28 @@ def screening(stock_list: dict[str, Stock]):
     result_list = list()
 
     for stock in stock_list.values():
-        screen = True
-        if stock.pe_5year_average >= 25 or stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
-            screen = False
-        for i in range(min(stock.net_income.keys()) + 1, max(stock.net_income.keys()) + 1):
-            if stock.net_income[i] < 0:
+        try:
+            screen = True
+            if stock.pe_5year_average >= 25 or stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
                 screen = False
-        if stock.average_income_growth < 0.05:
-            screen = False
+            for i in range(min(stock.net_income.keys()) + 1, max(stock.net_income.keys()) + 1):
+                if stock.net_income[i] < 0:
+                    screen = False
+            if stock.average_income_growth < 0.05:
+                screen = False
 
-        if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6:
-            screen = False
+            if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6:
+                screen = False
 
-        if screen:
-            result_list.append(stock)
+            if screen:
+                result_list.append(stock)
+            
+            print(stock.ticker)
+        except:
+            continue
 
 
     i = 1
     for stock in result_list:
         print(i, stock.ticker, stock.average_income_growth, stock.pe_5year_average )
         i+=1
-
-
-# screening(list_of_stocks(tickers.getTickers("./list.txt")))

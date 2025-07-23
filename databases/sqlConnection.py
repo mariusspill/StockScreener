@@ -113,56 +113,59 @@ def automate_data_insertion(ticker: str):
         print(ticker)
 
         for year in years:
-            revenue = dt.get_revenue(ticker, year)
-            net_income = dt.get_netIncome(ticker, year)
-            gross_profit = dt.get_gross_profit(ticker, year)
-            taxes = dt.get_taxes_paid(ticker, year)
-            interest = dt.get_interest_paid(ticker, year)
+            try:
+                revenue = dt.get_revenue(ticker, year)
+                net_income = dt.get_netIncome(ticker, year)
+                gross_profit = dt.get_gross_profit(ticker, year)
+                taxes = dt.get_taxes_paid(ticker, year)
+                interest = dt.get_interest_paid(ticker, year)
 
-            if revenue == None:
-                revenue = 0
+                if revenue == None:
+                    revenue = 0
 
-            cost_of_revenue = int(revenue) - int(gross_profit)
+                cost_of_revenue = int(revenue) - int(gross_profit)
 
-            if not "None" in net_income:
-                net_income = int(net_income)
-            else:
-                net_income = 0
-
-            if not "None" in interest:
-                interest = int(interest)
-            else:
-                interest = 0
-
-            if not "None" in taxes:
-                taxes = int(taxes)
-            else:
-                taxes = 0
-
-            ebit = int(net_income) + int(taxes) + int(interest)
-
-
-            da = dt.get_depreciation_and_amortization(ticker, year)
-            if not "None" in da:
-                ebitda = ebit + int(da)
-            else:
-                ebitda = ebit
-            operating_income = dt.get_operating_income(ticker, year)
-            operating_expenses = dt.get_operating_expenses(ticker, year)
-
-            cursor.execute(f"""SELECT company.id, company_identifiers.ticker, income_statements.*
-                        FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
-                        INNER JOIN income_statements ON company.id = income_statements.company_id
-                        WHERE company_identifiers.ticker = '{ticker}' AND income_statements.year = {year};""")
-            data = cursor.fetchall()
-
-            if data == []:
-                add_entry_income_statement(company_id, year, revenue, gross_profit, net_income=net_income, EBIT=ebit, EBITDA=ebitda, cost_of_revenue=cost_of_revenue, interest_cost=interest, taxes=taxes)
-            else:
-                if data[0][15] == 1:
-                    print("record checked handly")
+                if not "None" in net_income:
+                    net_income = int(net_income)
                 else:
-                    print("update possible")
+                    net_income = 0
+
+                if not "None" in interest:
+                    interest = int(interest)
+                else:
+                    interest = 0
+
+                if not "None" in taxes:
+                    taxes = int(taxes)
+                else:
+                    taxes = 0
+
+                ebit = int(net_income) + int(taxes) + int(interest)
+
+
+                da = dt.get_depreciation_and_amortization(ticker, year)
+                if not "None" in da:
+                    ebitda = ebit + int(da)
+                else:
+                    ebitda = ebit
+                operating_income = dt.get_operating_income(ticker, year)
+                operating_expenses = dt.get_operating_expenses(ticker, year)
+
+                cursor.execute(f"""SELECT company.id, company_identifiers.ticker, income_statements.*
+                            FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
+                            INNER JOIN income_statements ON company.id = income_statements.company_id
+                            WHERE company_identifiers.ticker = '{ticker}' AND income_statements.year = {year};""")
+                data = cursor.fetchall()
+
+                if data == []:
+                    add_entry_income_statement(company_id, year, revenue, gross_profit, net_income=net_income, EBIT=ebit, EBITDA=ebitda, cost_of_revenue=cost_of_revenue, interest_cost=interest, taxes=taxes)
+                else:
+                    if data[0][15] == 1:
+                        print("record checked handly")
+                    else:
+                        print("update possible")
+            except:
+                continue
 
     else:
         print("no company data for ", ticker)

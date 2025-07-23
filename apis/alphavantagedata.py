@@ -31,8 +31,6 @@ def get_revenue(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
         data = json.load(file)
 
-    return data["annualReports"][lastYear - year]["totalRevenue"]
-
 
 def get_netIncome(tckr: str, year: int):
     with open("./Data/RawData/" + tckr + "/" + tckr + "_incomeStatement.json", "r") as file:
