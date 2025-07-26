@@ -120,13 +120,14 @@ def list_of_stocks(ticker_list: str):
     return stock_list
 
 
-def screening(stock_list: dict[str, Stock]):
-    result_list = list()
+def screening(stock_list: dict[str, Stock], pe:int = 25):
+    result_list = list()    
+    pe = int(pe)
 
     for stock in stock_list.values():
         try:
             screen = True
-            if stock.pe_5year_average >= 25 or stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
+            if stock.pe_5year_average >= pe or stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
                 screen = False
             for i in range(min(stock.net_income.keys()) + 1, max(stock.net_income.keys()) + 1):
                 if stock.net_income[i] < 0:
@@ -140,12 +141,20 @@ def screening(stock_list: dict[str, Stock]):
             if screen:
                 result_list.append(stock)
             
-            print(stock.ticker)
         except:
             continue
-
 
     i = 1
     for stock in result_list:
         print(i, stock.ticker, stock.average_income_growth, stock.pe_5year_average )
         i+=1
+
+    return result_list
+
+
+def Screening_as_dict(stock_list: dict[str, Stock], pe: int=25):
+    screen = screening(stock_list, pe)
+    result = dict()
+    for element in screen:
+        result[element.ticker] = (element.average_income_growth, element.pe_5year_average)
+    return result
