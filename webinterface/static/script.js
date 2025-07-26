@@ -1,6 +1,11 @@
 async function sendParam() {
     const pe = document.getElementById('pe').value;
 
+    var table = document.getElementById('resultTable');
+    while (table.rows.length > 0) {
+        table.deleteRow(0);
+    }
+
     const response = await fetch('/screen', {
         method: 'POST',
         headers: {
@@ -11,7 +16,27 @@ async function sendParam() {
 
     if (response.ok) {
         const data = await response.json();
-        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        var header = table.createTHead();
+        var row = header.insertRow();
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = "<b> Ticker </b>"
+        var cell2 = row.insertCell(1);
+        cell2.innerHTML = "<b> Growth rate (5years average) </b>"
+        var cell3 = row.insertCell(2);
+        cell3.innerHTML = "<b> PE </b>"
+        for (const key in data){
+            console.log(key, data[key]);
+
+
+            var row = table.insertRow();
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+
+            cell1.innerText = key;
+            cell2.innerText = data[key][0];
+            cell3.innerText = data[key][1];
+        }
     } else {
         document.getElementById('result').innerText = 'Error fetching screening results';
     }
