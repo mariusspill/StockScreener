@@ -21,6 +21,8 @@ def daily_cache():
 
 def mainFunction():
     dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs)))
+    daily_fetch()
+    daily_cache()
     
 
 if __name__ == "__main__":

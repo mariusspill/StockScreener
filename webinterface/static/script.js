@@ -18,12 +18,19 @@ async function sendParam() {
         const data = await response.json();
         var header = table.createTHead();
         var row = header.insertRow();
-        var cell1 = row.insertCell(0);
-        cell1.innerHTML = "<b> Ticker </b>"
-        var cell2 = row.insertCell(1);
-        cell2.innerHTML = "<b> Growth rate (5years average) </b>"
-        var cell3 = row.insertCell(2);
-        cell3.innerHTML = "<b> PE </b>"
+
+        var cell1 = document.createElement('th');
+        cell1.innerText = "Ticker";
+
+        var cell2 = document.createElement("th");
+        cell2.innerText = "Growth rate (5years average)"
+
+        var cell3 = document.createElement("th");
+        cell3.innerText = "PE"
+
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
         for (const key in data){
             console.log(key, data[key]);
 
