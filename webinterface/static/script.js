@@ -38,7 +38,7 @@ async function sendParam() {
         cell1.innerText = "Ticker";
 
         var cell2 = document.createElement("th");
-        cell2.innerText = "Growth rate (5years average)"
+        cell2.innerText = "Growth rate"
 
         var cell3 = document.createElement("th");
         cell3.innerText = "PE"

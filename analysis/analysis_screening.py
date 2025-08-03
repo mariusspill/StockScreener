@@ -44,7 +44,7 @@ class Stock:
             self.earnings_growth[year] = (thisYear / lastYear) - 1
 
     
-    def calc_average_earnings_growth(self, no_years: int=20):
+    def calc_average_earnings_growth(self, no_years: int=30):
         sum = 0
         self.average_income_growth = dict()
 
@@ -109,7 +109,7 @@ def print_analysis(tckrs: str):
         print(akn.pe_income_average_5years(ticker))
 
 
-def list_of_stocks(ticker_list: str, year: int=2019):
+def list_of_stocks(ticker_list: str, year: int=1990):
     formatted_tickers = "', '".join(ticker_list)
     sql.cursor.execute(f"""SELECT company_identifiers.ticker, income_statements.net_income, income_statements.year
                    FROM Company INNER JOIN Company_Identifiers ON Company.id = Company_Identifiers.company_id
@@ -137,7 +137,7 @@ def list_of_stocks(ticker_list: str, year: int=2019):
     return stock_list
 
 
-def screening(stock_list: dict[str, Stock], pe:int = 25, pechecked:bool=True, growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
+def screening(stock_list: dict[str, Stock], pe:int = 25, pechecked:bool=True, growth_years: int=5,  growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
     result_list = list()    
     pe = int(pe)
 
@@ -154,7 +154,7 @@ def screening(stock_list: dict[str, Stock], pe:int = 25, pechecked:bool=True, gr
                     if stock.net_income[i] < 0:
                         screen = False
 
-            if stock.average_income_growth[10] < growth and growthcheck:
+            if stock.average_income_growth[growth_years] < growth and growthcheck:
                 screen = False
 
             if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6 and volatility:
@@ -175,9 +175,9 @@ def screening(stock_list: dict[str, Stock], pe:int = 25, pechecked:bool=True, gr
     return result_list
 
 
-def Screening_as_dict(stock_list: dict[str, Stock], pe: int=25, pechecked:bool=True, growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
-    screen = screening(stock_list, pe, pechecked, growth, growthcheck, negative, volatility)
+def Screening_as_dict(stock_list: dict[str, Stock], pe: int=25, pechecked:bool=True, growth_years:int=5, growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
+    screen = screening(stock_list, pe, pechecked, growth_years, growth, growthcheck, negative, volatility)
     result = dict()
     for element in screen:
-        result[element.ticker] = (element.average_income_growth[10], element.pe_5year_average)
+        result[element.ticker] = (element.average_income_growth[growth_years], element.pe_5year_average)
     return result

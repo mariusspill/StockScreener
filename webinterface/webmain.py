@@ -20,11 +20,15 @@ def screen():
         growth = float(data.get('growth'))
     except:
         growth = 0
+    try:
+        growth_years = int(data.get('growthYears'))
+    except:
+        growth_years = 5
     growthcheck = data.get('growthcheck')
     negative = data.get('negative')
     volatility = data.get('volatility')
     dt.shared.set_pe(int(pe))
-    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs, 1990), pe, pecheck, growth, growthcheck, negative, volatility))
+    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs, 1990), pe, pecheck, growth_years, growth, growthcheck, negative, volatility))
     return jsonify(dt.shared.get_list())
 
 def runFlask():
