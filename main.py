@@ -20,9 +20,10 @@ def daily_cache():
 
 
 def mainFunction():
-    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs)))
-        # daily_fetch()
-        # daily_cache()
+    # dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs)))
+    # daily_fetch()
+    # daily_cache()
+    print(ascreen.list_of_stocks(tckrs, 1990)["JNJ"].average_income_growth)
     
 
 if __name__ == "__main__":

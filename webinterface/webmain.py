@@ -16,12 +16,15 @@ def screen():
     data = request.get_json()
     pe = data.get('pe')
     pecheck = data.get('pecheck')
-    growth = float(data.get('growth'))
+    try:
+        growth = float(data.get('growth'))
+    except:
+        growth = 0
     growthcheck = data.get('growthcheck')
     negative = data.get('negative')
     volatility = data.get('volatility')
     dt.shared.set_pe(int(pe))
-    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs), pe, pecheck, growth, growthcheck, negative, volatility))
+    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs, 1990), pe, pecheck, growth, growthcheck, negative, volatility))
     return jsonify(dt.shared.get_list())
 
 def runFlask():

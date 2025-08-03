@@ -1,7 +1,8 @@
 async function sendParam() {
     const pe = document.getElementById('pe').value;
     const pecheck = document.getElementById('cbpe').checked;
-    
+   
+    const growthYears = document.getElementById('years').value;
     const growth = document.getElementById('growth').value;
     const growthcheck = document.getElementById('cbig').checked;
 
@@ -20,6 +21,7 @@ async function sendParam() {
         },
         body: JSON.stringify({ pe: pe,
                                 pecheck: pecheck,
+                                growthYears: growthYears,
                                 growth: growth,
                                 growthcheck: growthcheck,
                                 negative: negative,
