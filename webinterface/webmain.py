@@ -14,9 +14,14 @@ def index():
 @app.route('/screen', methods=['POST'])
 def screen():
     data = request.get_json()
-    param = data.get('pe')
-    dt.shared.set_pe(int(param))
-    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs), param))
+    pe = data.get('pe')
+    pecheck = data.get('pecheck')
+    growth = float(data.get('growth'))
+    growthcheck = data.get('growthcheck')
+    negative = data.get('negative')
+    volatility = data.get('volatility')
+    dt.shared.set_pe(int(pe))
+    dt.shared.set_list(ascreen.Screening_as_dict(ascreen.list_of_stocks(tckrs), pe, pecheck, growth, growthcheck, negative, volatility))
     return jsonify(dt.shared.get_list())
 
 def runFlask():

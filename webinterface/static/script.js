@@ -1,5 +1,12 @@
 async function sendParam() {
     const pe = document.getElementById('pe').value;
+    const pecheck = document.getElementById('cbpe').checked;
+    
+    const growth = document.getElementById('growth').value;
+    const growthcheck = document.getElementById('cbig').checked;
+
+    const negative = document.getElementById('negative').checked;
+    const volatility = document.getElementById('volatility').checked;
 
     var table = document.getElementById('resultTable');
     while (table.rows.length > 0) {
@@ -11,7 +18,13 @@ async function sendParam() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ pe: pe })
+        body: JSON.stringify({ pe: pe,
+                                pecheck: pecheck,
+                                growth: growth,
+                                growthcheck: growthcheck,
+                                negative: negative,
+                                volatility: volatility
+         })
     });
 
     if (response.ok) {

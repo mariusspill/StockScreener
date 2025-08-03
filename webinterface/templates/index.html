@@ -9,9 +9,16 @@
         <h1> Stock Screener </h1>
         <div id="input">
             <p> Enter Average 5 year PE:</p>
+            <input type="checkbox" id="cbpe"/>
             <input type="number" id="pe"/>
             <p> Enter Average 5 year income growth:</p>
-            <input type="number"/>
+            <input type="checkbox" id="cbig"/>
+            <input type="number" id="growth"/>
+            <p> No negative income: </p>
+            <input type="checkbox" id="negative"/>
+            <p> Volatility checker: </p>
+            <input type="checkbox" id="volatility"/>
+            <br/>
             <button onclick="sendParam()">Run Screening</button>
         </div>
 

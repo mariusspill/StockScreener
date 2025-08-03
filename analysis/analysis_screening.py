@@ -57,11 +57,15 @@ class Stock:
 
         for year in range(lastYear - 4, lastYear + 1):
             try:
+                if "MO" in self.ticker:
+                    print(year, self.earnings_growth[year])
                 rate = self.earnings_growth[year]
             except:
                 rate = -1
             sum += rate
 
+        if "MO" in self.ticker:
+            print(sum)
         self.average_income_growth = (sum / 5)
 
 
@@ -120,23 +124,32 @@ def list_of_stocks(ticker_list: str):
     return stock_list
 
 
-def screening(stock_list: dict[str, Stock], pe:int = 25):
+def screening(stock_list: dict[str, Stock], pe:int = 25, pechecked:bool=True, growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
     result_list = list()    
     pe = int(pe)
 
     for stock in stock_list.values():
+
         try:
             screen = True
-            if stock.pe_5year_average >= pe or stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
+
+            if stock.pe_5year_average >= pe and pechecked: 
                 screen = False
-            for i in range(min(stock.net_income.keys()) + 1, max(stock.net_income.keys()) + 1):
-                if stock.net_income[i] < 0:
-                    screen = False
-            if stock.average_income_growth < 0.05:
+            
+            if stock.pe_5year_average <= 0 or stock.average_income_growth < 0:
+                screen = False                
+
+            if negative:
+                for i in range(min(stock.net_income.keys()) + 1, max(stock.net_income.keys()) + 1):
+                    if stock.net_income[i] < 0:
+                        screen = False
+
+            if stock.average_income_growth < growth and growthcheck:
                 screen = False
 
-            if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6:
+            if max(stock.net_income.values()) - min(stock.net_income.values()) > min(stock.net_income.values()) * 0.6 and volatility:
                 screen = False
+            
 
             if screen:
                 result_list.append(stock)
@@ -152,9 +165,11 @@ def screening(stock_list: dict[str, Stock], pe:int = 25):
     return result_list
 
 
-def Screening_as_dict(stock_list: dict[str, Stock], pe: int=25):
-    screen = screening(stock_list, pe)
+def Screening_as_dict(stock_list: dict[str, Stock], pe: int=25, pechecked:bool=True, growth:float=0.05, growthcheck:bool=True, negative:bool=True, volatility:bool=True):
+    print(pe, pechecked, growth, growthcheck, volatility)
+    screen = screening(stock_list, pe, pechecked, growth, growthcheck, negative, volatility)
     result = dict()
+    print(result)
     for element in screen:
         result[element.ticker] = (element.average_income_growth, element.pe_5year_average)
     return result
