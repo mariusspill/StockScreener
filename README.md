@@ -1,15 +1,15 @@
 # StockScreener
-Python based stock screener for value investing.
+A Python-based prototype for value investing, exploring full-stack data workflows including data pipelines, machine learning, valuation models, and visualization.
 
 # Disclaimer
 Note: This is an exploratory prototype, developed as a learning project to experiment with full-stack data workflows (data pipelines, ML models, valuation logic, and visualization). It is not production-ready, but serves as a foundation for future development.
 
 # Components
-* Webinterface: Hosted by Flask and created in raw HTML, CSS and JS. Includes a filter and display of results that meet filtered conditions
-* Database: Self-Hosted MySQL Database that stores high quality finance data like company infos and annual income statements or balance sheets
-  - Included API pipeline from both YahooFinance and AlphaAdvantage for high quality data
-  - Some handchecked data from official 10-K and SEC sources
+* Web Interface: Flask backend with raw HTML, CSS, and JavaScript frontend. Includes filtering and result display.
+* Database: Self-hosted MySQL database storing financial data (company information, annual reports, balance sheets).
+  - Integrated pipelines from YahooFinance and AlphaVantage APIs.
+  - Augmented with manually validated data from SEC 10-K filings.
 * Valuation Models:
-  - Automated Discounted Cashflow Model
-  - First ML Models (mostly linear regression models)
-* Screening logic: loads data from the database and applies a python script to detect stocks that meet certain conditions
+  - Automated Discounted Cash Flow (DCF) model.
+  - Initial machine learning models (linear regression).
+* Screening Logic: Python scripts to load data and apply screening criteria to detect candidate stocks.
