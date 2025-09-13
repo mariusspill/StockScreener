@@ -2,7 +2,7 @@
 Python based stock screener for value investing.
 
 # Disclaimer
-This is a first prototype! Nothing of it is either polished nor production ready. It is supposed to showcase technologies I experimented with and which I want to develop further in an environment that I am pashioned about. Components might be missing and the database is currently offline since it is run on my home pc in Germany.
+Note: This is an exploratory prototype, developed as a learning project to experiment with full-stack data workflows (data pipelines, ML models, valuation logic, and visualization). It is not production-ready, but serves as a foundation for future development.
 
 # Components
 * Webinterface: Hosted by Flask and created in raw HTML, CSS and JS. Includes a filter and display of results that meet filtered conditions
