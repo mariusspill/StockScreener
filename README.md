@@ -1,5 +1,5 @@
 # StockScreener
-python based stock screener for value investing
+Python based stock screener for value investing.
 
 # Disclaimer
 This is a first prototype! Nothing of it is either polished nor production ready. It is supposed to showcase technologies I experimented with and which I want to develop further in an environment that I am pashioned about. Components might be missing and the database is currently offline since it is run on my home pc in Germany.
